@@ -1,49 +1,69 @@
 import React, { Component } from 'react';
 
+const emptyUser = {
+  name: '',
+  city: '',
+  zip: ''
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      user: {
-        name: 'Kevin',
-        city: 'Plymouth'
-      }
-    };
+      newUser: emptyUser,
+      userList: []
+    }
 
     // this.handleChange = this.handleChange.bind(this);
 
   }
 
-  handleUserChange = (event) => {
-    console.log(event);
-    this.setState({ user: {
-      name: event.target.value,
-      city: this.state.user.city 
-    }});
+  handleChange = propertyName => event => {
+    this.setState({
+      newUser: {
+        ...this.state.newUser,
+        [propertyName]: event.target.value
+      }
+    })
   }
 
-  handleCityChange = (event) => {
-    this.setState({ user: {
-      name: this.state.user.name,
-      city: event.target.value 
-    }})
-  }
-
-  logState = (event) => {
-    console.log(this.state.user);
+  handleSubmit = (event) => {
+    event.preventDefault();
+    console.log(this.state.newUser);
+    this.setState({
+      userList: [
+        ...this.state.userList,
+        this.state.newUser
+      ],
+      newUser: emptyUser
+    })
   }
 
   render() {
     return (
       <div className="App">
-        {this.state.user.name} is from {this.state.user.city}
-        <input onChange={this.handleUserChange} placeholder="User Name" />
-        <input onChange={this.handleCityChange} placeholder="City Name" />
-        <button onClick={this.logState}>Submit</button>
+        <form onSubmit={this.handleSubmit}>
+          <input value={this.state.newUser.name} onChange={this.handleChange('name')} placeholder="User Name" />
+          <input value={this.state.newUser.city} onChange={this.handleChange('city')} placeholder="City Name" />
+          <input value={this.state.newUser.zip} onChange={this.handleChange('zip')} placeholder="Zip Code" />
+          <input type="submit" value="Click me to submit form!" />
+          <p>
+            {this.state.newUser.name} is from {this.state.newUser.city}, {this.state.newUser.zip}
+          </p>
+        </form>
+        {/* <ul>
+          {this.state.userList.map(user => <li key={user.name}>{user.name} is from {user.city}, {user.zip}</li>)}
+        </ul> */}
+        {this.state.userList.map(user => <div key={user.name} style={{ textAlign: 'center', border: 'solid black 1px', width: '25%', margin: '5px' }}>
+          <h3>{user.name}</h3>
+          <p>Home: {user.city}, {user.zip}</p>
+        </div>
+        )
+        }
       </div>
-    );
+    )
   }
-}
 
+}
 export default App;
